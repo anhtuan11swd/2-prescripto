@@ -1,11 +1,12 @@
-import "./App.css";
+import { Toaster } from "react-hot-toast";
 
-function App() {
+const App = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <h1 className="font-bold text-3xl underline">Hello world!</h1>
+    <div className="mt-10 text-center font-bold text-3xl text-green-500">
+      <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
+      Testing Tailwind
     </div>
   );
-}
+};
 
 export default App;
