@@ -1,7 +1,65 @@
 import express from "express";
-import { addDoctor } from "../controllers/adminController.js";
+import { addDoctor, loginAdmin } from "../controllers/adminController.js";
+import authAdmin from "../middleware/authAdmin.js";
 
 const adminRouter = express.Router();
+
+/**
+ * @swagger
+ * /api/v1/admin/login:
+ *   post:
+ *     summary: Đăng nhập admin
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "admin@prescripto.com"
+ *                 description: Email admin
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "Admin123!"
+ *                 description: Mật khẩu admin
+ *     responses:
+ *       200:
+ *         description: Đăng nhập thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *                   description: JWT token
+ *       400:
+ *         description: Thông tin đăng nhập không hợp lệ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Thông tin đăng nhập không hợp lệ"
+ */
+adminRouter.post("/login", loginAdmin);
 
 /**
  * @swagger
@@ -9,6 +67,8 @@ const adminRouter = express.Router();
  *   post:
  *     summary: Thêm bác sĩ mới
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -89,7 +149,7 @@ const adminRouter = express.Router();
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: "Đã thêm bác sĩ"
+ *                   example: "Bác sĩ đã được thêm"
  *       400:
  *         description: Dữ liệu không hợp lệ
  *         content:
@@ -102,8 +162,8 @@ const adminRouter = express.Router();
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: "Hình ảnh là bắt buộc"
+ *                   example: "Ảnh là bắt buộc"
  */
-adminRouter.post("/add-doctor", addDoctor);
+adminRouter.post("/add-doctor", authAdmin, addDoctor);
 
 export default adminRouter;
