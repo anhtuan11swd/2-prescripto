@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 
 const Home = lazy(() => import("./Pages/Home"));
@@ -36,6 +37,7 @@ const App = () => {
           <Route element={<Appointment />} path="/appointment/:docId" />
         </Routes>
       </Suspense>
+      <Footer />
     </div>
   );
 };
