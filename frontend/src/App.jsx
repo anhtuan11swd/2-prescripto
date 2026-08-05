@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Toaster } from "react-hot-toast";
 import { Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 const Home = lazy(() => import("./Pages/Home"));
 const Doctors = lazy(() => import("./Pages/Doctors"));
@@ -14,6 +15,7 @@ const Appointment = lazy(() => import("./Pages/Appointment"));
 const App = () => {
   return (
     <div className="mx-4 sm:mx-[10%]">
+      <Navbar />
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
       <Suspense
         fallback={
