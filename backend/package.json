@@ -1,0 +1,41 @@
+{
+  "author": "Trần Anh Tuấn",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.9.1",
+    "multer": "^2.2.0",
+    "validator": "^13.15.35"
+  },
+  "description": "",
+  "devDependencies": {
+    "@biomejs/biome": "2.4.16",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "globals": "^17.9.0",
+    "nodemon": "^3.1.14"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "main": "src/server.js",
+  "name": "backend",
+  "scripts": {
+    "biome:check": "biome check --write .",
+    "biome:check:unsafe": "biome check --write --unsafe .",
+    "biome:ci": "biome ci .",
+    "biome:format": "biome format --write .",
+    "biome:lint": "biome lint --write .",
+    "dev": "nodemon src/server.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "predev": "npx kill-port 4000",
+    "server": "nodemon src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "version": "1.0.0"
+}
