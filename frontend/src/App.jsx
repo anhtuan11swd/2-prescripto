@@ -14,7 +14,7 @@ const Appointment = lazy(() => import("./Pages/Appointment"));
 
 const App = () => {
   return (
-    <div className="mx-4 sm:mx-[10%]">
+    <div className="px-4 pt-20">
       <Navbar />
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
       <Suspense

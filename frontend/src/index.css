@@ -2,9 +2,14 @@
 
 html,
 body {
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .active hr {
   display: block;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
