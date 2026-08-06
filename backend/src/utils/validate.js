@@ -14,7 +14,10 @@ const doctorSchema = z.object({
 
   email: z.string().email("Vui lòng nhập email hợp lệ"),
   experience: z.string().min(1, "Kinh nghiệm là bắt buộc"),
-  fees: z.string().min(1, "Phí là bắt buộc"),
+  fees: z
+    .string()
+    .min(1, "Phí là bắt buộc")
+    .refine((val) => Number(val) >= 15000, "Phí tối thiểu là 15.000₫"),
   name: z
     .string()
     .trim()

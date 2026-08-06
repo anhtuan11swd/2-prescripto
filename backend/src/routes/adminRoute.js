@@ -1,5 +1,10 @@
 import express from "express";
-import { addDoctor, loginAdmin } from "../controllers/adminController.js";
+import {
+  addDoctor,
+  allDoctors,
+  changeAvailability,
+  loginAdmin,
+} from "../controllers/adminController.js";
 import authAdmin from "../middleware/authAdmin.js";
 
 const adminRouter = express.Router();
@@ -165,5 +170,151 @@ adminRouter.post("/login", loginAdmin);
  *                   example: "Ảnh là bắt buộc"
  */
 adminRouter.post("/add-doctor", authAdmin, addDoctor);
+
+/**
+ * @swagger
+ * /api/v1/admin/all-doctors:
+ *   get:
+ *     summary: Lấy danh sách tất cả bác sĩ
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 doctors:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f1a2b3c4d5e6f7a8b9c0d1"
+ *                       name:
+ *                         type: string
+ *                         example: "BS. Nguyễn Văn An"
+ *                       email:
+ *                         type: string
+ *                         example: "nguyenvanan@gmail.com"
+ *                       speciality:
+ *                         type: string
+ *                         example: "Bác sĩ đa khoa"
+ *                       degree:
+ *                         type: string
+ *                         example: "Bác sĩ đa khoa"
+ *                       experience:
+ *                         type: string
+ *                         example: "4 năm"
+ *                       about:
+ *                         type: string
+ *                         example: "BS. Nguyễn Văn An là bác sĩ đa khoa..."
+ *                       fees:
+ *                         type: number
+ *                         example: 500000
+ *                       address:
+ *                         type: object
+ *                         properties:
+ *                           line1:
+ *                             type: string
+ *                             example: "123 Nguyễn Huệ, Quận 1"
+ *                           line2:
+ *                             type: string
+ *                             example: "TP. Hồ Chí Minh"
+ *                       image:
+ *                         type: string
+ *                         example: "https://res.cloudinary.com/..."
+ *                       available:
+ *                         type: boolean
+ *                         example: true
+ *                       date:
+ *                         type: number
+ *                         example: 1693500000000
+ *       401:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Không có quyền truy cập"
+ */
+adminRouter.get("/all-doctors", authAdmin, allDoctors);
+
+/**
+ * @swagger
+ * /api/v1/admin/change-availability:
+ *   post:
+ *     summary: Đổi trạng thái hoạt động của bác sĩ
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - docId
+ *             properties:
+ *               docId:
+ *                 type: string
+ *                 example: "64f1a2b3c4d5e6f7a8b9c0d1"
+ *                 description: ID bác sĩ cần đổi trạng thái
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Trạng thái đã được cập nhật"
+ *       400:
+ *         description: Không tìm thấy bác sĩ
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Không tìm thấy bác sĩ"
+ *       401:
+ *         description: Không có quyền truy cập
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Không có quyền truy cập"
+ */
+adminRouter.post("/change-availability", authAdmin, changeAvailability);
 
 export default adminRouter;

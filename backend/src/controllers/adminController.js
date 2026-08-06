@@ -87,6 +87,37 @@ const addDoctorHandler = async (req, res) => {
   }
 };
 
+const allDoctors = async (_req, res) => {
+  try {
+    const doctors = await doctorModel.find({}).select("-password");
+    res.json({ doctors, success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
+const changeAvailability = async (req, res) => {
+  try {
+    const { docId } = req.body;
+
+    const docData = await doctorModel.findById(docId);
+
+    if (!docData) {
+      return res.json({ message: "Không tìm thấy bác sĩ", success: false });
+    }
+
+    await doctorModel.findByIdAndUpdate(docId, {
+      available: !docData.available,
+    });
+
+    res.json({ message: "Trạng thái đã được cập nhật", success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
 const addDoctor = [upload.single("image"), addDoctorHandler];
 
-export { addDoctor, loginAdmin };
+export { addDoctor, allDoctors, changeAvailability, loginAdmin };
