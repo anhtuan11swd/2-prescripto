@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
+import AppContext from "../context/AppContext";
 
 const Navbar = () => {
+  const { logOut, token, userData } = useContext(AppContext);
+
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const [token, setToken] = useState(false);
 
   const menuItems = [
     { label: "TRANG CHỦ", path: "/" },
@@ -14,20 +16,20 @@ const Navbar = () => {
     { label: "LIÊN HỆ", path: "/contact" },
   ];
 
-  const logOut = () => {
-    setToken(false);
+  const handleLogOut = () => {
+    logOut();
     navigate("/");
   };
 
   return (
     <div className="fixed top-0 right-0 left-0 z-50 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
         <button
           className="cursor-pointer"
           onClick={() => navigate("/")}
           type="button"
         >
-          <img alt="Prescripto" className="w-36" src={assets.logo} />
+          <img alt="Prescripto" className="w-28 md:w-36" src={assets.logo} />
         </button>
 
         {/* Desktop menu */}
@@ -54,7 +56,7 @@ const Navbar = () => {
                 <img
                   alt="Profile"
                   className="h-8 w-8 rounded-full object-cover"
-                  src={assets.profile_pic}
+                  src={userData?.image || assets.profile_pic}
                 />
                 <img alt="" className="w-3" src={assets.dropdown_icon} />
               </div>
@@ -76,7 +78,7 @@ const Navbar = () => {
                 <hr className="my-1 border-gray-100" />
                 <button
                   className="w-full cursor-pointer px-4 py-2 text-left text-gray-700 text-sm hover:bg-gray-50"
-                  onClick={logOut}
+                  onClick={handleLogOut}
                   type="button"
                 >
                   Đăng xuất
@@ -95,6 +97,7 @@ const Navbar = () => {
 
           {/* Mobile menu icon */}
           <button
+            aria-label="Mở menu"
             className="w-6 cursor-pointer md:hidden"
             onClick={() => setShowMenu(true)}
             type="button"
@@ -114,9 +117,14 @@ const Navbar = () => {
                   }}
                   type="button"
                 >
-                  <img alt="Prescripto" className="w-36" src={assets.logo} />
+                  <img
+                    alt="Prescripto"
+                    className="w-28 md:w-36"
+                    src={assets.logo}
+                  />
                 </button>
                 <button
+                  aria-label="Đóng menu"
                   className="w-6 cursor-pointer"
                   onClick={() => setShowMenu(false)}
                   type="button"
@@ -124,6 +132,20 @@ const Navbar = () => {
                   <img alt="Close" src={assets.cross_icon} />
                 </button>
               </div>
+
+              {token && (
+                <div className="mt-4 flex flex-col items-center gap-2">
+                  <img
+                    alt="Profile"
+                    className="h-16 w-16 rounded-full object-cover"
+                    src={userData?.image || assets.profile_pic}
+                  />
+                  <p className="font-medium text-base text-gray-800">
+                    {userData?.name}
+                  </p>
+                </div>
+              )}
+
               <ul className="mt-6 flex flex-col items-center gap-6">
                 {menuItems.map((item) => (
                   <NavLink
@@ -155,12 +177,12 @@ const Navbar = () => {
                       }}
                       type="button"
                     >
-                      Lịch hẹn của tôi
+                      Lịch sử của tôi
                     </button>
                     <button
                       className="cursor-pointer font-medium text-gray-700 text-lg"
                       onClick={() => {
-                        logOut();
+                        handleLogOut();
                         setShowMenu(false);
                       }}
                       type="button"
