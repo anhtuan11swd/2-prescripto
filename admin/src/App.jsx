@@ -9,8 +9,8 @@ import { DoctorContext } from "./context/DoctorContext.context.js";
 const Login = lazy(() => import("./Pages/Login.jsx"));
 const Dashboard = lazy(() => import("./Pages/Dashboard.jsx"));
 const Appointments = lazy(() => import("./Pages/Appointments.jsx"));
-const AddDoctor = lazy(() => import("./Pages/AddDoctor.jsx"));
-const DoctorsList = lazy(() => import("./Pages/DoctorsList.jsx"));
+const AddDoctor = lazy(() => import("./Pages/Admin/AddDoctor.jsx"));
+const DoctorsList = lazy(() => import("./Pages/Admin/DoctorsList.jsx"));
 const DoctorProfile = lazy(() => import("./Pages/DoctorProfile.jsx"));
 
 const App = () => {
