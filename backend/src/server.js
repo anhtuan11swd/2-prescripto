@@ -6,6 +6,7 @@ import connectCloudinary from "./config/cloudinary.js";
 import connectDB from "./config/mongodb.js";
 import swaggerSpec from "./config/swagger.js";
 import adminRouter from "./routes/adminRoute.js";
+import userRouter from "./routes/userRoute.js";
 import seedDoctors from "./seed/doctorSeed.js";
 
 const app = express();
@@ -17,6 +18,8 @@ app.use(cors());
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use("/api/v1/admin", adminRouter);
+
+app.use("/api/v1/user", userRouter);
 
 app.get("/", (_req, res) => {
   res.send("API đang hoạt động");
