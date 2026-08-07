@@ -7,6 +7,7 @@ import Navbar from "./components/Navbar";
 const Home = lazy(() => import("./Pages/Home"));
 const Doctors = lazy(() => import("./Pages/Doctors"));
 const Login = lazy(() => import("./Pages/Login"));
+const PaymentSuccess = lazy(() => import("./Pages/PaymentSuccess"));
 const About = lazy(() => import("./Pages/About"));
 const Contact = lazy(() => import("./Pages/Contact"));
 const MyProfile = lazy(() => import("./Pages/MyProfile"));
@@ -30,6 +31,7 @@ const App = () => {
           <Route element={<Doctors />} path="/doctors" />
           <Route element={<Doctors />} path="/doctors/:speciality" />
           <Route element={<Login />} path="/login" />
+          <Route element={<PaymentSuccess />} path="/payment-success" />
           <Route element={<About />} path="/about" />
           <Route element={<Contact />} path="/contact" />
           <Route element={<MyProfile />} path="/my-profile" />

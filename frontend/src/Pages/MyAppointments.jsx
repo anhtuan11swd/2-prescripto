@@ -15,6 +15,7 @@ const MyAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [cancelId, setCancelId] = useState(null);
   const [cancelling, setCancelling] = useState(false);
+  const [payingId, setPayingId] = useState(null);
 
   const getUserAppointments = async () => {
     try {
@@ -72,6 +73,28 @@ const MyAppointments = () => {
     } finally {
       setCancelling(false);
       setCancelId(null);
+    }
+  };
+
+  const appointmentStripe = async (appointmentId) => {
+    try {
+      setPayingId(appointmentId);
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/v1/user/payment-stripe`,
+        { appointmentId },
+        { headers: { token } },
+      );
+
+      if (data.success) {
+        window.location.assign(data.session.url);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setPayingId(null);
     }
   };
 
@@ -142,10 +165,12 @@ const MyAppointments = () => {
                       </p>
                     ) : (
                       <button
-                        className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm transition-all hover:bg-[#5F6FFF] hover:text-white"
+                        className="cursor-pointer rounded-lg border border-gray-300 px-4 py-2 font-medium text-gray-700 text-sm transition-all hover:bg-[#5F6FFF] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={payingId === item._id}
+                        onClick={() => appointmentStripe(item._id)}
                         type="button"
                       >
-                        Thanh toán
+                        {payingId === item._id ? "Đang xử lý..." : "Thanh toán"}
                       </button>
                     )}
                     <button
