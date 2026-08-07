@@ -14,7 +14,12 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
+  }),
+);
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -40,3 +45,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+export default app;
