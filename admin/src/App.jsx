@@ -11,6 +11,8 @@ const Dashboard = lazy(() => import("./Pages/Dashboard.jsx"));
 const Appointments = lazy(() => import("./Pages/Appointments.jsx"));
 const AddDoctor = lazy(() => import("./Pages/Admin/AddDoctor.jsx"));
 const DoctorsList = lazy(() => import("./Pages/Admin/DoctorsList.jsx"));
+const DoctorDashboard = lazy(() => import("./Pages/DoctorDashboard.jsx"));
+const DoctorAppointments = lazy(() => import("./Pages/DoctorAppointments.jsx"));
 const DoctorProfile = lazy(() => import("./Pages/DoctorProfile.jsx"));
 
 const App = () => {
@@ -38,18 +40,27 @@ const App = () => {
               />
               <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
                 <Routes>
-                  <Route element={<Dashboard />} path="/" />
-                  <Route element={<Appointments />} path="/appointments" />
-
                   {aToken && (
                     <>
+                      <Route element={<Dashboard />} path="/" />
+                      <Route element={<Appointments />} path="/appointments" />
                       <Route element={<AddDoctor />} path="/add-doctor" />
                       <Route element={<DoctorsList />} path="/doctor-list" />
                     </>
                   )}
 
                   {dToken && (
-                    <Route element={<DoctorProfile />} path="/profile" />
+                    <>
+                      <Route element={<DoctorDashboard />} path="/" />
+                      <Route
+                        element={<DoctorAppointments />}
+                        path="/appointments"
+                      />
+                      <Route
+                        element={<DoctorProfile />}
+                        path="/doctor-profile"
+                      />
+                    </>
                   )}
                 </Routes>
               </main>

@@ -3,6 +3,8 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { AdminContext } from "./AdminContext.context.js";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const AdminContextProvider = ({ children }) => {
   const [aToken, setAToken] = useState(
     localStorage.getItem("aToken") ? localStorage.getItem("aToken") : "",
@@ -10,8 +12,6 @@ const AdminContextProvider = ({ children }) => {
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [dashData, setDashData] = useState(false);
-
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const getAllDoctors = useCallback(async () => {
     try {

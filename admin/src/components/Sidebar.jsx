@@ -43,27 +43,25 @@ const Sidebar = ({ isOpen, onClose }) => {
         </div>
 
         <nav className="flex flex-col gap-1.5">
-          <NavLink
-            className={({ isActive }) => (isActive ? navActive : navItem)}
-            end
-            onClick={onClose}
-            to="/"
-          >
-            <img alt="" className="w-5" src={assets.home_icon} />
-            Tổng quan
-          </NavLink>
-
-          <NavLink
-            className={({ isActive }) => (isActive ? navActive : navItem)}
-            onClick={onClose}
-            to="/appointments"
-          >
-            <img alt="" className="w-5" src={assets.appointment_icon} />
-            Lịch hẹn
-          </NavLink>
-
           {aToken && (
             <>
+              <NavLink
+                className={({ isActive }) => (isActive ? navActive : navItem)}
+                end
+                onClick={onClose}
+                to="/"
+              >
+                <img alt="" className="w-5" src={assets.home_icon} />
+                Tổng quan
+              </NavLink>
+              <NavLink
+                className={({ isActive }) => (isActive ? navActive : navItem)}
+                onClick={onClose}
+                to="/appointments"
+              >
+                <img alt="" className="w-5" src={assets.appointment_icon} />
+                Lịch hẹn
+              </NavLink>
               <NavLink
                 className={({ isActive }) => (isActive ? navActive : navItem)}
                 onClick={onClose}
@@ -84,14 +82,33 @@ const Sidebar = ({ isOpen, onClose }) => {
           )}
 
           {dToken && (
-            <NavLink
-              className={({ isActive }) => (isActive ? navActive : navItem)}
-              onClick={onClose}
-              to="/profile"
-            >
-              <img alt="" className="w-5" src={assets.people_icon} />
-              Hồ sơ
-            </NavLink>
+            <>
+              <NavLink
+                className={({ isActive }) => (isActive ? navActive : navItem)}
+                end
+                onClick={onClose}
+                to="/"
+              >
+                <img alt="" className="w-5" src={assets.home_icon} />
+                Tổng quan
+              </NavLink>
+              <NavLink
+                className={({ isActive }) => (isActive ? navActive : navItem)}
+                onClick={onClose}
+                to="/appointments"
+              >
+                <img alt="" className="w-5" src={assets.appointment_icon} />
+                Lịch hẹn
+              </NavLink>
+              <NavLink
+                className={({ isActive }) => (isActive ? navActive : navItem)}
+                onClick={onClose}
+                to="/doctor-profile"
+              >
+                <img alt="" className="w-5" src={assets.people_icon} />
+                Hồ sơ
+              </NavLink>
+            </>
           )}
         </nav>
       </aside>
