@@ -1,5 +1,7 @@
+import axios from "axios";
 import { useContext, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 import { assets } from "../assets/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
 import AppContext from "../context/AppContext";
@@ -8,7 +10,9 @@ const daysOfWeek = ["CN", "T2", "T3", "T4", "T5", "T6", "T7"];
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySymbol } = useContext(AppContext);
+  const navigate = useNavigate();
+  const { backendUrl, doctors, currencySymbol, getDoctorsData, token } =
+    useContext(AppContext);
 
   const docInfo = useMemo(
     () => doctors.find((doctor) => doctor._id === docId),
@@ -17,6 +21,7 @@ const Appointment = () => {
 
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const docSlots = useMemo(() => {
     if (!docInfo) return [];
@@ -51,7 +56,9 @@ const Appointment = () => {
           minute: "2-digit",
         });
 
-        const dateKey = currentDate.toDateString();
+        const dateKey = `${currentDate.getDate()}_${
+          currentDate.getMonth() + 1
+        }_${currentDate.getFullYear()}`;
         const isBooked = docInfo.slots_booked?.[dateKey]?.includes(timeString);
 
         if (!isBooked) {
@@ -69,6 +76,48 @@ const Appointment = () => {
 
     return result;
   }, [docInfo]);
+
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warn("Vui lòng đăng nhập để đặt lịch");
+      navigate("/login");
+      return;
+    }
+
+    if (!slotTime) {
+      toast.error("Vui lòng chọn khung giờ");
+      return;
+    }
+
+    const selected = docSlots[slotIndex]?.[0]?.datetime;
+    if (!selected) return;
+
+    const slotDate = `${selected.getDate()}_${
+      selected.getMonth() + 1
+    }_${selected.getFullYear()}`;
+
+    try {
+      setLoading(true);
+
+      const { data } = await axios.post(
+        `${backendUrl}/api/v1/user/book-appointment`,
+        { docId, slotDate, slotTime },
+        { headers: { token } },
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        await getDoctorsData();
+        navigate("/my-appointments");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!docInfo) return null;
 
@@ -129,7 +178,7 @@ const Appointment = () => {
             <div className="flex gap-3 overflow-x-auto pb-2">
               {docSlots.map((item, index) => (
                 <button
-                  className={`flex w-16 shrink-0 flex-col items-center gap-1 rounded-xl py-3 text-sm transition-all ${
+                  className={`flex w-16 shrink-0 cursor-pointer flex-col items-center gap-1 rounded-xl py-3 text-sm transition-all ${
                     slotIndex === index
                       ? "bg-[#5F6FFF] text-white"
                       : "border border-gray-300 text-gray-600 hover:bg-gray-50"
@@ -173,10 +222,12 @@ const Appointment = () => {
 
             {/* Book Button */}
             <button
-              className="w-fit cursor-pointer rounded-full bg-[#5F6FFF] px-8 py-3 font-medium text-sm text-white transition-all hover:opacity-90"
+              className="w-fit cursor-pointer rounded-full bg-[#5F6FFF] px-8 py-3 font-medium text-sm text-white transition-all hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:opacity-50"
+              disabled={loading || !slotTime}
+              onClick={bookAppointment}
               type="button"
             >
-              Đặt lịch hẹn
+              {loading ? "Đang đặt lịch..." : "Đặt lịch hẹn"}
             </button>
           </div>
         </div>

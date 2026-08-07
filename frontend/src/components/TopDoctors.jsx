@@ -1,8 +1,10 @@
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { doctors } from "../assets/assets";
+import AppContext from "../context/AppContext";
 
 const TopDoctors = () => {
   const navigate = useNavigate();
+  const { doctors } = useContext(AppContext);
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 py-16">
