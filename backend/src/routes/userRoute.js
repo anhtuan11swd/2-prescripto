@@ -6,8 +6,10 @@ import {
   getProfile,
   listAppointment,
   loginUser,
+  paymentStripe,
   registerUser,
   updateProfile,
+  verifyStripe,
 } from "../controllers/userController.js";
 import authUser from "../middleware/authUser.js";
 import upload from "../middleware/multer.js";
@@ -508,5 +510,80 @@ userRouter.get("/appointments", authUser, listAppointment);
  *                   example: "Không được phép thao tác"
  */
 userRouter.post("/cancel-appointment", authUser, cancelAppointment);
+
+/**
+ * @swagger
+ * /api/v1/user/payment-stripe:
+ *   post:
+ *     summary: Tạo Stripe Checkout Session
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - appointmentId
+ *             properties:
+ *               appointmentId:
+ *                 type: string
+ *                 description: ID lịch hẹn
+ *     responses:
+ *       200:
+ *         description: Tạo session thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 session:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     url:
+ *                       type: string
+ */
+userRouter.post("/payment-stripe", authUser, paymentStripe);
+
+/**
+ * @swagger
+ * /api/v1/user/verify-stripe:
+ *   post:
+ *     summary: Xác minh thanh toán Stripe
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - sessionId
+ *             properties:
+ *               sessionId:
+ *                 type: string
+ *                 description: Stripe Checkout Session ID
+ *     responses:
+ *       200:
+ *         description: Xác minh thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
+userRouter.post("/verify-stripe", authUser, verifyStripe);
 
 export default userRouter;
