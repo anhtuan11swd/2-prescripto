@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import toast from "react-hot-toast";
 import { NavLink, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import AppContext from "../context/AppContext";
@@ -18,6 +19,7 @@ const Navbar = () => {
 
   const handleLogOut = () => {
     logOut();
+    toast.success("Đăng xuất thành công!");
     navigate("/");
   };
 
