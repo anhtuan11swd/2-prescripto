@@ -1,7 +1,10 @@
 import express from "express";
 import {
   addDoctor,
+  adminDashboard,
   allDoctors,
+  appointmentCancel,
+  appointmentsAdmin,
   changeAvailability,
   loginAdmin,
 } from "../controllers/adminController.js";
@@ -316,5 +319,153 @@ adminRouter.get("/all-doctors", authAdmin, allDoctors);
  *                   example: "Không có quyền truy cập"
  */
 adminRouter.post("/change-availability", authAdmin, changeAvailability);
+
+/**
+ * @swagger
+ * /api/v1/admin/appointments:
+ *   get:
+ *     summary: Lấy danh sách toàn bộ lịch hẹn
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 appointments:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       userId:
+ *                         type: string
+ *                       docId:
+ *                         type: string
+ *                       slotDate:
+ *                         type: string
+ *                         example: "5_8_2026"
+ *                       slotTime:
+ *                         type: string
+ *                         example: "10:30 AM"
+ *                       amount:
+ *                         type: number
+ *                         example: 500000
+ *                       date:
+ *                         type: number
+ *                       cancelled:
+ *                         type: boolean
+ *                       payment:
+ *                         type: boolean
+ *                       isCompleted:
+ *                         type: boolean
+ *                       docData:
+ *                         type: object
+ *                       userData:
+ *                         type: object
+ *       401:
+ *         description: Không có quyền truy cập
+ */
+adminRouter.get("/appointments", authAdmin, appointmentsAdmin);
+
+/**
+ * @swagger
+ * /api/v1/admin/cancel-appointment:
+ *   post:
+ *     summary: Hủy lịch hẹn (Admin)
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - appointmentId
+ *             properties:
+ *               appointmentId:
+ *                 type: string
+ *                 description: ID lịch hẹn cần hủy
+ *     responses:
+ *       200:
+ *         description: Hủy lịch thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Đã hủy lịch hẹn"
+ *       400:
+ *         description: Không tìm thấy lịch hẹn
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Không tìm thấy lịch hẹn"
+ *       401:
+ *         description: Không có quyền truy cập
+ */
+adminRouter.post("/cancel-appointment", authAdmin, appointmentCancel);
+
+/**
+ * @swagger
+ * /api/v1/admin/dashboard:
+ *   get:
+ *     summary: Lấy dữ liệu thống kê Dashboard
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lấy dữ liệu thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 dashData:
+ *                   type: object
+ *                   properties:
+ *                     doctors:
+ *                       type: number
+ *                       example: 15
+ *                     appointments:
+ *                       type: number
+ *                       example: 128
+ *                     patients:
+ *                       type: number
+ *                       example: 214
+ *                     latestAppointments:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       401:
+ *         description: Không có quyền truy cập
+ */
+adminRouter.get("/dashboard", authAdmin, adminDashboard);
 
 export default adminRouter;
