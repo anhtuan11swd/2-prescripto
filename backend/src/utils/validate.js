@@ -53,15 +53,29 @@ const userPhoneSchema = z
     "Số điện thoại không hợp lệ. Nhập số di động Việt Nam 10 số (03x, 05x, 07x, 08x, 09x)",
   );
 
+const emailSchema = z
+  .string("Email là bắt buộc")
+  .email("Vui lòng nhập email hợp lệ");
+
 const registerUserSchema = z.object({
-  email: z.string("Email là bắt buộc").email("Vui lòng nhập email hợp lệ"),
+  email: emailSchema,
   name: fullNameSchema,
   password: passwordSchema,
 });
 
 const loginUserSchema = z.object({
-  email: z.string().min(1, "Email là bắt buộc"),
+  email: emailSchema,
   password: z.string().min(1, "Mật khẩu là bắt buộc"),
+});
+
+const bookAppointmentSchema = z.object({
+  docId: z.string().min(1, "Bác sĩ là bắt buộc"),
+  slotDate: z.string().min(1, "Ngày khám là bắt buộc"),
+  slotTime: z.string().min(1, "Giờ khám là bắt buộc"),
+});
+
+const cancelAppointmentSchema = z.object({
+  appointmentId: z.string().min(1, "Mã lịch hẹn là bắt buộc"),
 });
 
 const updateProfileSchema = z.object({
@@ -122,7 +136,10 @@ const doctorSchema = z.object({
 });
 
 export {
+  bookAppointmentSchema,
+  cancelAppointmentSchema,
   doctorSchema,
+  emailSchema,
   fullNameSchema,
   loginUserSchema,
   passwordSchema,

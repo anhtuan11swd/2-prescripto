@@ -2,8 +2,12 @@ import "dotenv/config";
 import bcrypt from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
 import jwt from "jsonwebtoken";
+import appointmentModel from "../models/appointmentModel.js";
+import doctorModel from "../models/doctorModel.js";
 import userModel from "../models/userModel.js";
 import {
+  bookAppointmentSchema,
+  cancelAppointmentSchema,
   loginUserSchema,
   registerUserSchema,
   updateProfileSchema,
@@ -130,4 +134,162 @@ const updateProfile = async (req, res) => {
   }
 };
 
-export { getProfile, loginUser, registerUser, updateProfile };
+const getDoctors = async (_req, res) => {
+  try {
+    const doctors = await doctorModel.find({}).select("-password");
+
+    res.json({ doctors, success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
+const bookAppointment = async (req, res) => {
+  try {
+    const result = bookAppointmentSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.json({
+        message: result.error.issues[0].message,
+        success: false,
+      });
+    }
+
+    const { docId, slotDate, slotTime } = result.data;
+    const userId = req.userId;
+
+    const docData = await doctorModel
+      .findById(docId)
+      .select("-password")
+      .lean();
+
+    if (!docData) {
+      return res.json({ message: "Không tìm thấy bác sĩ", success: false });
+    }
+
+    if (!docData.available) {
+      return res.json({
+        message: "Bác sĩ hiện không nhận lịch",
+        success: false,
+      });
+    }
+
+    const slotsBooked = { ...docData.slots_booked };
+
+    if (slotsBooked[slotDate]) {
+      if (slotsBooked[slotDate].includes(slotTime)) {
+        return res.json({
+          message: "Khung giờ này đã được đặt",
+          success: false,
+        });
+      }
+      slotsBooked[slotDate].push(slotTime);
+    } else {
+      slotsBooked[slotDate] = [slotTime];
+    }
+
+    const userData = await userModel
+      .findById(userId)
+      .select("-password")
+      .lean();
+
+    delete docData.slots_booked;
+
+    const appointmentData = {
+      amount: docData.fees,
+      date: Date.now(),
+      docData,
+      docId,
+      slotDate,
+      slotTime,
+      userData,
+      userId,
+    };
+
+    await new appointmentModel(appointmentData).save();
+
+    await doctorModel.findByIdAndUpdate(docId, { slots_booked: slotsBooked });
+
+    res.json({ message: "Đặt lịch thành công", success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
+const listAppointment = async (req, res) => {
+  try {
+    const { userId } = req;
+
+    const appointments = await appointmentModel.find({ userId });
+
+    res.json({ appointments, success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
+const cancelAppointment = async (req, res) => {
+  try {
+    const result = cancelAppointmentSchema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.json({
+        message: result.error.issues[0].message,
+        success: false,
+      });
+    }
+
+    const { appointmentId } = result.data;
+    const { userId } = req;
+
+    const appointmentData = await appointmentModel.findById(appointmentId);
+
+    if (!appointmentData) {
+      return res.json({ message: "Không tìm thấy lịch hẹn", success: false });
+    }
+
+    if (appointmentData.userId !== userId) {
+      return res.json({ message: "Không được phép thao tác", success: false });
+    }
+
+    await appointmentModel.findByIdAndUpdate(appointmentId, {
+      cancelled: true,
+    });
+
+    const { docId, slotDate, slotTime } = appointmentData;
+
+    const doctorData = await doctorModel.findById(docId);
+
+    if (doctorData?.slots_booked[slotDate]) {
+      const slotsBooked = doctorData.slots_booked;
+      slotsBooked[slotDate] = slotsBooked[slotDate].filter(
+        (e) => e !== slotTime,
+      );
+
+      if (slotsBooked[slotDate].length === 0) {
+        delete slotsBooked[slotDate];
+      }
+
+      await doctorModel.findByIdAndUpdate(docId, { slots_booked: slotsBooked });
+    }
+
+    res.json({ message: "Đã hủy lịch hẹn", success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: error.message, success: false });
+  }
+};
+
+export {
+  bookAppointment,
+  cancelAppointment,
+  getDoctors,
+  getProfile,
+  listAppointment,
+  loginUser,
+  registerUser,
+  updateProfile,
+};
