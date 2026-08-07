@@ -90,8 +90,14 @@ const Doctors = () => {
                 src={item.image}
               />
               <div className="flex items-center gap-1 px-2 pt-2">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
-                <p className="text-green-500 text-xs">Có lịch trống</p>
+                <div
+                  className={`h-2 w-2 rounded-full ${item.available ? "bg-green-500" : "bg-gray-400"}`}
+                />
+                <p
+                  className={`text-xs ${item.available ? "text-green-500" : "text-gray-400"}`}
+                >
+                  {item.available ? "Có lịch trống" : "Kín lịch"}
+                </p>
               </div>
               <p className="px-2 pt-1 font-medium text-gray-900 text-sm">
                 {item.name}
